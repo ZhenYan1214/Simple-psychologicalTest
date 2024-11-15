@@ -64,9 +64,6 @@
     <!-- 點擊音效 -->
     <audio id="click-sound" src="https://www.dropbox.com/scl/fi/7ocel5r4x89cr3i1wclsk/.mp3?rlkey=bdf3soxs5tskb0wb6i7g92a3e&st=2sdlnxlg&dl=1" preload="auto"></audio>
 
-    <!-- 結尾音樂 -->
-    <audio id="end-music" src="https://www.dropbox.com/scl/fi/ne21d9w7jxwa8m4osc41a/.MP3?rlkey=oao4fbg73fs49hvnr5w4ur1x7&st=q8bvm01u&dl=1" preload="auto"></audio>
-
     <div class="container">
         <h1>揭開你心中隱藏的動物本性？</h1>
         <div id="quiz-container"></div>
@@ -161,20 +158,14 @@
             document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('result').style.display = 'block';
 
-            // 獲得得分最高的動物
             const resultAnimal = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
             document.getElementById('animal-result').textContent = resultAnimal;
 
-            // 創建圖片元素並顯示
             const animalImage = document.createElement('img');
             animalImage.src = animalImages[resultAnimal];
             animalImage.alt = `${resultAnimal} 的圖片`;
             animalImage.style.width = '300px';
             document.getElementById('result').appendChild(animalImage);
-
-            // 播放結尾音樂
-            const endMusic = document.getElementById('end-music');
-            endMusic.play();
         }
 
         // 開始顯示第一個問題
@@ -183,11 +174,17 @@
         // 確保背景音樂自動播放
         window.onload = function() {
             const audio = document.getElementById('background-music');
-            audio.muted = false;
+            audio.muted = false; // 解除靜音
             audio.play().catch(error => {
                 console.log("音樂自動播放被阻止，需手動啟動：", error);
             });
         };
+
+        // 點擊音效播放函數
+        function playClickSound() {
+            const clickSound = document.getElementById('click-sound');
+            clickSound.play();
+        }
     </script>
 </body>
 </html>
