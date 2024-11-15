@@ -8,24 +8,24 @@
     <style>
         /* 設定整個網頁的基本樣式 */
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: Arial, sans-serif; /* 設定字體 */
+            text-align: center; /* 文字置中 */
             margin: 0;
             padding: 0;
             background-image: url('心理測驗/封面.png'); /* 替換為背景圖片路徑 */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
-            color: #333333;
+            background-size: cover; /* 讓背景圖片覆蓋整個螢幕 */
+            background-repeat: no-repeat; /* 不重複背景圖片 */
+            background-attachment: fixed; /* 背景固定在螢幕上 */
+            background-position: center; /* 背景置中 */
+            color: #333333; /* 設定文字顏色（可修改） */
         }
 
         /* 設定測驗內容區域樣式 */
         .container {
-            background-color: rgba(192, 192, 192, 0.3);
+            background-color:rgba(192,192,192,0.3); /* 半透明背景 */
             padding: 20px;
-            border-radius: 10px;
-            display: inline-block;
+            border-radius: 10px; /* 邊角圓角 */
+            display: inline-block; /* 內容區域置中 */
             margin-top: 20px;
         }
 
@@ -36,40 +36,31 @@
             padding: 15px;
             border: none;
             cursor: pointer;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #ffccd5, #ffc1e3);
-            color: #5a5a5a;
-            font-size: 16px;
-            font-weight: bold;
-            font-family: 'Permanent Marker', sans-serif;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background 0.2s;
+            border-radius: 15px; /* 圓角效果 */
+            background: linear-gradient(135deg, #ffccd5, #ffc1e3); /* 柔和的粉色漸變 */
+            color: #5a5a5a; /* 深灰色文字，增加可讀性 */
+            font-size: 16px; /* 適當放大字體 */
+            font-weight: bold; /* 文字加粗 */
+            font-family: 'Permanent Marker', sans-serif; /* 使用引入的可愛字體 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 增加陰影來創造質感 */
+            transition: transform 0.2s, background 0.2s; /* 添加點擊時的動畫效果和漸變變化 */
         }
 
+        /* 當滑鼠懸停在選項上時的效果 */
         .option:hover {
-            background: linear-gradient(135deg, #ffc1e3, #ffccd5);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, #ffc1e3, #ffccd5); /* 反轉漸變顏色 */
+            transform: scale(1.05); /* 放大效果 */
         }
 
+        /* 設定測驗結果區域樣式 */
         #result {
             margin-top: 20px;
-        }
-
-        #play-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #ffccd5;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-
     <!-- 背景音樂 -->
-    <audio id="background-music" loop>
+    <audio id="background-music" autoplay loop>
         <source src="https://www.dropbox.com/scl/fi/u179caox4mzwk2nswab3d/cute.mp3?rlkey=ncurfusoetfovev7gbtuvzu73&st=51sqt2u7&dl=0" type="audio/mpeg">
         您的瀏覽器不支援音樂播放。
     </audio>
@@ -80,9 +71,6 @@
         <div id="result" style="display: none;">
             <h2>你的測驗結果是：<span id="animal-result"></span>！</h2>
         </div>
-        
-        <!-- 播放音樂的按鈕 -->
-        <button id="play-button">播放音樂</button>
     </div>
 
     <script>
@@ -119,24 +107,27 @@
         };
 
         const animalImages = {
-            "小豬1": "心理測驗/PIG1.png",
-            "小豬2": "心理測驗/PIG2.png",
-            "小豬3": "心理測驗/PIG3.png",
-            "小豬4": "心理測驗/PIG4.png"
+            "小豬1": "心理測驗/PIG1.png", // 替換為實際圖片 URL
+            "小豬2": "心理測驗/PIG2.png", // 替換為實際圖片 URL
+            "小豬3": "心理測驗/PIG3.png", // 替換為實際圖片 URL
+            "小豬4": "心理測驗/PIG4.png"  // 替換為實際圖片 URL
         };
 
         let currentQuestionIndex = 0;
 
+        // 顯示問題
         function displayQuestion() {
             if (currentQuestionIndex < questions.length) {
                 const questionContainer = document.getElementById('quiz-container');
-                questionContainer.innerHTML = '';
+                questionContainer.innerHTML = ''; // 清空之前的內容
                 const question = questions[currentQuestionIndex];
 
+                // 創建問題元素
                 const questionElement = document.createElement('h2');
                 questionElement.textContent = question.question;
                 questionContainer.appendChild(questionElement);
 
+                // 創建選項元素
                 question.options.forEach((option, index) => {
                     const optionElement = document.createElement('div');
                     optionElement.textContent = option;
@@ -145,45 +136,49 @@
                     questionContainer.appendChild(optionElement);
                 });
             } else {
-                showResult();
+                showResult(); // 顯示結果
             }
         }
 
+        // 處理選擇選項的邏輯
         function selectOption(answer) {
             if (answer === 1) scores["小豬1"] += 1;
             if (answer === 2) scores["小豬2"] += 1;
             if (answer === 3) scores["小豬3"] += 1;
             if (answer === 4) scores["小豬4"] += 1;
 
-            currentQuestionIndex++;
+            currentQuestionIndex++; // 移至下一個問題
             displayQuestion();
         }
 
+        // 顯示測驗結果
         function showResult() {
             document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('result').style.display = 'block';
 
+            // 獲得得分最高的動物
             const resultAnimal = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
             document.getElementById('animal-result').textContent = resultAnimal;
 
+            // 創建圖片元素並顯示
             const animalImage = document.createElement('img');
             animalImage.src = animalImages[resultAnimal];
             animalImage.alt = `${resultAnimal} 的圖片`;
-            animalImage.style.width = '300px';
+            animalImage.style.width = '300px'; // 設定圖片寬度（可根據需要調整）
             document.getElementById('result').appendChild(animalImage);
         }
 
+        // 開始顯示第一個問題
         displayQuestion();
 
-        // 播放音樂的邏輯
-        const playButton = document.getElementById("play-button");
-        playButton.addEventListener("click", function() {
+        // 確保背景音樂自動播放
+        window.onload = function() {
             const audio = document.getElementById('background-music');
             audio.muted = false;
             audio.play().catch(error => {
                 console.log("需要用戶互動才能播放音樂。", error);
             });
-        });
+        };
     </script>
 </body>
 </html>
