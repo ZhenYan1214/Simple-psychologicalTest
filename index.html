@@ -8,51 +8,47 @@
     <style>
         /* 設定整個網頁的基本樣式 */
         body {
-            font-family: Arial, sans-serif; /* 設定字體 */
-            text-align: center; /* 文字置中 */
+            font-family: Arial, sans-serif;
+            text-align: center;
             margin: 0;
             padding: 0;
-            background-image: url('./心理測驗/封面.png'); /* 替換為背景圖片路徑 */
-            background-size: cover; /* 讓背景圖片覆蓋整個螢幕 */
-            background-repeat: no-repeat; /* 不重複背景圖片 */
-            background-attachment: fixed; /* 背景固定在螢幕上 */
-            background-position: center; /* 背景置中 */
-            color: #333333; /* 設定文字顏色（可修改） */
+            background-image: url('./心理測驗/封面.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            color: #333333;
         }
 
-        /* 設定測驗內容區域樣式 */
         .container {
-            background-color:rgba(192,192,192,0.3); /* 半透明背景 */
+            background-color: rgba(192, 192, 192, 0.3);
             padding: 20px;
-            border-radius: 10px; /* 邊角圓角 */
-            display: inline-block; /* 內容區域置中 */
+            border-radius: 10px;
+            display: inline-block;
             margin-top: 20px;
         }
 
-        /* 設定選項按鈕的樣式 */
         .option {
             display: block;
             margin: 10px 0;
             padding: 15px;
             border: none;
             cursor: pointer;
-            border-radius: 15px; /* 圓角效果 */
-            background: linear-gradient(135deg, #ffccd5, #ffc1e3); /* 柔和的粉色漸變 */
-            color: #5a5a5a; /* 深灰色文字，增加可讀性 */
-            font-size: 16px; /* 適當放大字體 */
-            font-weight: bold; /* 文字加粗 */
-            font-family: 'Permanent Marker', sans-serif; /* 使用引入的可愛字體 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 增加陰影來創造質感 */
-            transition: transform 0.2s, background 0.2s; /* 添加點擊時的動畫效果和漸變變化 */
+            border-radius: 15px;
+            background: linear-gradient(135deg, #ffccd5, #ffc1e3);
+            color: #5a5a5a;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Permanent Marker', sans-serif;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background 0.2s;
         }
 
-        /* 當滑鼠懸停在選項上時的效果 */
         .option:hover {
-            background: linear-gradient(135deg, #ffc1e3, #ffccd5); /* 反轉漸變顏色 */
-            transform: scale(1.05); /* 放大效果 */
+            background: linear-gradient(135deg, #ffc1e3, #ffccd5);
+            transform: scale(1.05);
         }
 
-        /* 設定測驗結果區域樣式 */
         #result {
             margin-top: 20px;
         }
@@ -64,6 +60,9 @@
         <source src="https://www.dropbox.com/scl/fi/u179caox4mzwk2nswab3d/cute.mp3?rlkey=ncurfusoetfovev7gbtuvzu73&raw=1" type="audio/mpeg">
         您的瀏覽器不支援音樂播放。
     </audio>
+
+    <!-- 點擊音效 -->
+    <audio id="click-sound" src="https://www.dropbox.com/scl/fi/7ocel5r4x89cr3i1wclsk/.mp3?rlkey=bdf3soxs5tskb0wb6i7g92a3e&st=2sdlnxlg&dl=1" preload="auto"></audio>
 
     <div class="container">
         <h1>揭開你心中隱藏的動物本性？</h1>
@@ -107,10 +106,10 @@
         };
 
         const animalImages = {
-            "小豬1": "./心理測驗/PIG2.png", // 替換為實際圖片 URL
-            "小豬2": "./心理測驗/PIG2.png", // 替換為實際圖片 URL
-            "小豬3": "./心理測驗/PIG2.png", // 替換為實際圖片 URL
-            "小豬4": "./心理測驗/PIG2.png"  // 替換為實際圖片 URL
+            "小豬1": "./心理測驗/PIG2.png",
+            "小豬2": "./心理測驗/PIG2.png",
+            "小豬3": "./心理測驗/PIG2.png",
+            "小豬4": "./心理測驗/PIG2.png"
         };
 
         let currentQuestionIndex = 0;
@@ -132,7 +131,10 @@
                     const optionElement = document.createElement('div');
                     optionElement.textContent = option;
                     optionElement.classList.add('option');
-                    optionElement.onclick = () => selectOption(index + 1);
+                    optionElement.onclick = () => {
+                        playClickSound();  // 播放點擊音效
+                        selectOption(index + 1);
+                    };
                     questionContainer.appendChild(optionElement);
                 });
             } else {
@@ -156,15 +158,13 @@
             document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('result').style.display = 'block';
 
-            // 獲得得分最高的動物
             const resultAnimal = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
             document.getElementById('animal-result').textContent = resultAnimal;
 
-            // 創建圖片元素並顯示
             const animalImage = document.createElement('img');
             animalImage.src = animalImages[resultAnimal];
             animalImage.alt = `${resultAnimal} 的圖片`;
-            animalImage.style.width = '300px'; // 設定圖片寬度（可根據需要調整）
+            animalImage.style.width = '300px';
             document.getElementById('result').appendChild(animalImage);
         }
 
@@ -179,6 +179,12 @@
                 console.log("音樂自動播放被阻止，需手動啟動：", error);
             });
         };
+
+        // 點擊音效播放函數
+        function playClickSound() {
+            const clickSound = document.getElementById('click-sound');
+            clickSound.play();
+        }
     </script>
 </body>
 </html>
