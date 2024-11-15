@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>揭開你心中隱藏的動物本性？</title>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <style>
+        /* 設定整個網頁的基本樣式 */
+        body {
+            font-family: Arial, sans-serif; /* 設定字體 */
+            text-align: center; /* 文字置中 */
+            margin: 0;
+            padding: 0;
+            background-image: url('封面.png'); /* 替換為背景圖片路徑 */
+            background-size: cover; /* 讓背景圖片覆蓋整個螢幕 */
+            background-repeat: no-repeat; /* 不重複背景圖片 */
+            background-attachment: fixed; /* 背景固定在螢幕上 */
+            background-position: center; /* 背景置中 */
+            color: #333333; /* 設定文字顏色（可修改） */
+        }
+
+        /* 設定測驗內容區域樣式 */
+        .container {
+            background-color:rgba(192,192,192,0.3); /* 半透明背景 */
+            padding: 20px;
+            border-radius: 10px; /* 邊角圓角 */
+            display: inline-block; /* 內容區域置中 */
+            margin-top: 20px;
+        }
+
+        /* 設定選項按鈕的樣式 */
+        .option {
+            display: block;
+            margin: 10px 0;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 15px; /* 圓角效果 */
+            background: linear-gradient(135deg, #ffccd5, #ffc1e3); /* 柔和的粉色漸變 */
+            color: #5a5a5a; /* 深灰色文字，增加可讀性 */
+            font-size: 16px; /* 適當放大字體 */
+            font-weight: bold; /* 文字加粗 */
+            font-family: 'Permanent Marker', sans-serif; /* 使用引入的可愛字體 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 增加陰影來創造質感 */
+            transition: transform 0.2s, background 0.2s; /* 添加點擊時的動畫效果和漸變變化 */
+        }
+
+        /* 當滑鼠懸停在選項上時的效果 */
+        .option:hover {
+            background: linear-gradient(135deg, #ffc1e3, #ffccd5); /* 反轉漸變顏色 */
+            transform: scale(1.05); /* 放大效果 */
+        }
+
+        /* 設定測驗結果區域樣式 */
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景音樂 -->
+    <audio id="background-music" autoplay loop>
+        <source src="cute.mp3" type="audio/mpeg">
+        您的瀏覽器不支援音樂播放。
+    </audio>
+
+    <div class="container">
+        <h1>揭開你心中隱藏的動物本性？</h1>
+        <div id="quiz-container"></div>
+        <div id="result" style="display: none;">
+            <h2>你的測驗結果是：<span id="animal-result"></span>！</h2>
+        </div>
+    </div>
+
+    <script>
+        // 問題及選項
+        const questions = [
+            {
+                question: "如果你可以選擇一種超能力，你會選哪個？",
+                options: ["像超級女英雄一樣飛行", "在水中自由自在地游泳，像美人魚公主", "瞬間掌握知識，變身知識女神", "完成一切任務後依然保持優雅，成為超級全能女王"]
+            },
+            {
+                question: "如果你可以挑選一種娛樂活動來打發時間，你會選？",
+                options: ["在花園裡享受下午茶，和朋友談心", "窩在沙發上看浪漫愛情劇", "手作DIY，創造自己的小藝術品", "在舞台上跳舞，展現自己"]
+            },
+            {
+                question: "假如你要參加一場派對，你會怎麼打扮？",
+                options: ["穿上優雅的連衣裙，搭配亮眼高跟鞋", "簡單舒適的居家服，保持輕鬆愉快", "穿上別緻的洋裝，配上精緻耳環", "Cosplay成你最喜愛的動漫女主角，驚艷全場"]
+            },
+            {
+                question: "週末你最想做的事是什麼？",
+                options: ["早上起來晨跑，享受清晨的陽光", "泡一個香氛澡，放鬆心情", "窩在家裡讀小說，沉浸在故事中", "和朋友一起拍攝有趣短片，捕捉笑容"]
+            },
+            {
+                question: "如果可以變成一種樂器，你會是哪一種？",
+                options: ["鋼琴，優雅動人", "小提琴，細膩而感性", "長笛，輕盈而夢幻", "尤克里里，輕鬆愉快"]
+            }
+        ];
+
+        // 計分系統和圖片 URL
+        const scores = {
+            "小豬1": 0,
+            "小豬2": 0,
+            "小豬3": 0,
+            "小豬4": 0
+        };
+
+        const animalImages = {
+            "小豬1": "PIG1.png", // 替換為實際圖片 URL
+            "小豬2": "PIG2.png", // 替換為實際圖片 URL
+            "小豬3": "PIG3.png", // 替換為實際圖片 URL
+            "小豬4": "PIG4.png"  // 替換為實際圖片 URL
+        };
+
+        let currentQuestionIndex = 0;
+
+        // 顯示問題
+        function displayQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const questionContainer = document.getElementById('quiz-container');
+                questionContainer.innerHTML = ''; // 清空之前的內容
+                const question = questions[currentQuestionIndex];
+
+                // 創建問題元素
+                const questionElement = document.createElement('h2');
+                questionElement.textContent = question.question;
+                questionContainer.appendChild(questionElement);
+
+                // 創建選項元素
+                question.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.textContent = option;
+                    optionElement.classList.add('option');
+                    optionElement.onclick = () => selectOption(index + 1);
+                    questionContainer.appendChild(optionElement);
+                });
+            } else {
+                showResult(); // 顯示結果
+            }
+        }
+
+        // 處理選擇選項的邏輯
+        function selectOption(answer) {
+            if (answer === 1) scores["小豬1"] += 1;
+            if (answer === 2) scores["小豬2"] += 1;
+            if (answer === 3) scores["小豬3"] += 1;
+            if (answer === 4) scores["小豬4"] += 1;
+
+            currentQuestionIndex++; // 移至下一個問題
+            displayQuestion();
+        }
+
+        // 顯示測驗結果
+        function showResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+
+            // 獲得得分最高的動物
+            const resultAnimal = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            document.getElementById('animal-result').textContent = resultAnimal;
+
+            // 創建圖片元素並顯示
+            const animalImage = document.createElement('img');
+            animalImage.src = animalImages[resultAnimal];
+            animalImage.alt = `${resultAnimal} 的圖片`;
+            animalImage.style.width = '300px'; // 設定圖片寬度（可根據需要調整）
+            document.getElementById('result').appendChild(animalImage);
+        }
+
+        // 開始顯示第一個問題
+        displayQuestion();
+
+        // 確保背景音樂自動播放
+        window.onload = function() {
+            const audio = document.getElementById('background-music');
+            audio.muted = false; // 解除靜音
+            audio.play().catch(error => {
+                console.log("音樂自動播放被阻止，需手動啟動：", error);
+            });
+        };
+    </script>
+</body>
+</html>
