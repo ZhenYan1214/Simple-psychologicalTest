@@ -182,12 +182,15 @@
 
         // 確保背景音樂自動播放
         window.onload = function() {
+        // 等待用户点击后播放背景音乐
+        document.getElementById('quiz-container').addEventListener('click', function() {
             const audio = document.getElementById('background-music');
-            audio.muted = false;
+            audio.muted = false;  // 确保音频不静音
             audio.play().catch(error => {
-                console.log("音樂自動播放被阻止，需手動啟動：", error);
-            });
-        };
+            console.log("音樂自動播放被阻止，需手動啟動：", error);
+        });
+    });
+};
 
         // 播放點擊音效
         function playClickSound() {
