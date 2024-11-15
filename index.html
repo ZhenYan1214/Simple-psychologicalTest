@@ -12,7 +12,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            background-image: url('心理測驗/封面.png'); /* 替換為背景圖片路徑 */
+            background-image: url('心理測驗/封面.png');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -20,7 +20,6 @@
             color: #333333;
         }
 
-        /* 設定測驗內容區域樣式 */
         .container {
             background-color: rgba(192, 192, 192, 0.3);
             padding: 20px;
@@ -29,7 +28,6 @@
             margin-top: 20px;
         }
 
-        /* 設定選項按鈕的樣式 */
         .option {
             display: block;
             margin: 10px 0;
@@ -73,6 +71,9 @@
         <source src="https://www.dropbox.com/scl/fi/u179caox4mzwk2nswab3d/cute.mp3?rlkey=ncurfusoetfovev7gbtuvzu73&st=51sqt2u7&dl=0" type="audio/mpeg">
         您的瀏覽器不支援音樂播放。
     </audio>
+
+    <!-- 點擊音效 -->
+    <audio id="click-sound" src="https://www.dropbox.com/scl/fi/7ocel5r4x89cr3i1wclsk/.mp3?rlkey=bdf3soxs5tskb0wb6i7g92a3e&st=i95y5dqj&dl=0" preload="auto"></audio>
 
     <div class="container">
         <h1>揭開你心中隱藏的動物本性？</h1>
@@ -141,7 +142,10 @@
                     const optionElement = document.createElement('div');
                     optionElement.textContent = option;
                     optionElement.classList.add('option');
-                    optionElement.onclick = () => selectOption(index + 1);
+                    optionElement.onclick = () => {
+                        playClickSound();  // 播放音效
+                        selectOption(index + 1);
+                    };
                     questionContainer.appendChild(optionElement);
                 });
             } else {
@@ -177,13 +181,17 @@
 
         // 播放音樂的邏輯
         const playButton = document.getElementById("play-button");
-        playButton.addEventListener("click", function() {
-            const audio = document.getElementById('background-music');
+        playButton.addEventListener("click", function () {
+            const audio = document.getElementById("background-music");
             audio.muted = false;
-            audio.play().catch(error => {
-                console.log("需要用戶互動才能播放音樂。", error);
-            });
+            audio.play();
         });
+
+        // 點擊音效播放函數
+        function playClickSound() {
+            const clickSound = document.getElementById('click-sound');
+            clickSound.play();
+        }
     </script>
 </body>
 </html>
