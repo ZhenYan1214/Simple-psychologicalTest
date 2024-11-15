@@ -51,6 +51,7 @@
             background: linear-gradient(135deg, #ffc1e3, #ffccd5); /* 反轉漸變顏色 */
             transform: scale(1.05); /* 放大效果 */
         }
+        
 
         /* 設定測驗結果區域樣式 */
         #result {
@@ -172,11 +173,11 @@
         displayQuestion();
 
         // 確保背景音樂自動播放
-        window.onload = function() {
+         window.onload = function() {
             const audio = document.getElementById('background-music');
-            audio.muted = false; // 解除靜音
+            audio.muted = false;
             audio.play().catch(error => {
-                console.log("音樂自動播放被阻止，需手動啟動：", error);
+                console.log("需要用戶互動才能播放音樂。", error);
             });
         };
     </script>
