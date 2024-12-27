@@ -6,7 +6,7 @@
 打開 index.html 檔案，開始測驗  
 回答問題，看看AI會給你什麼有趣的結果！  
 快來試試看，發現你心裡的小秘密吧！✨  
-<img src="封面.png" width="300px" height="200px" />  
-<img src="題目.png" width="300px" height="200px" />  
-<img src="結果.png" width="300px" height="200px" />  
+<img src="封面.png" width="450px" height="300px" />  
+<img src="題目.png" width="450px" height="300px" />  
+<img src="結果.png" width="450px" height="300px" />  
 
