@@ -1,55 +1,218 @@
-def ask_question(question, options):
-    print(question)
-    for i, option in enumerate(options, start=1):
-        print(f"{i}. {option}")
-    while True:
-        try:
-            choice = int(input("請選擇一個選項 (1-4): "))
-            if 1 <= choice <= len(options):
-                return choice
-            else:
-                print("請輸入有效的選項號碼。")
-        except ValueError:
-            print("請輸入有效的選項號碼。")
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI心理測驗生成器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* === 全局樣式 === */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+        }
 
-# 問題與對應的選項
-questions = [
-    ("如果你可以選擇一種超能力，你會選哪個？", 
-     ["超音速奔跑，就像飛毛腿一樣", "在水中呼吸，像人魚一樣", "瞬間學會一本書的內容，變身智慧大師", "瞬間完成遊戲，成為全服第一高手"]),
-    
-    ("如果你可以挑選一種娛樂活動來打發時間，你會選？", 
-     ["戶外露營，在星空下講鬼故事", "深夜看電影，連續劇馬拉松", "鑽進書堆，學點冷門知識", "玩遊戲，拯救世界和打爆怪物"]),
-    
-    ("假如你要參加一場派對，你會怎麼打扮？", 
-     ["穿上運動裝，隨時準備來場比賽", "穿著浴袍來，帶點幽默風", "帶上眼鏡和筆記本，隨時學習派對生存指南", "穿成動漫角色，讓大家刮目相看"]),
-    
-    ("週末你最想做的事是什麼？", 
-     ["早上起來去跑步，像風一樣自由", "睡到自然醒，再來個長時間泡澡", "窩在沙發上看書，讓腦袋充電", "挑戰遊戲新關卡，不斷刷新紀錄"]),
-    
-    ("如果可以變成一種樂器，你會是哪一種？", 
-     ["鼓，咚咚響不停", "大提琴，低沉又深情", "小提琴，優雅又智慧", "電子吉他，狂野和熱血"])
-]
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin: 50px auto;
+            max-width: 600px;
+        }
 
-# 計分系統
-scores = {
-    "狗": 0,
-    "貓": 0,
-    "兔子": 0,
-    "烏龜": 0
-}
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
 
-# 根據回答計算分數
-for question, options in questions:
-    answer = ask_question(question, options)
-    if answer == 1:
-        scores["狗"] += 1
-    elif answer == 2:
-        scores["貓"] += 1
-    elif answer == 3:
-        scores["兔子"] += 1
-    elif answer == 4:
-        scores["烏龜"] += 1
+        .option, .start-btn, .submit-btn {
+            margin: 15px 0;
+            padding: 15px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
 
-# 判斷結果
-result = max(scores, key=scores.get)
-print(f"你測驗的結果是：{result}！")
+        .option:hover, .start-btn:hover, .submit-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        #quiz-container h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        #loading {
+            font-size: 18px;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .input-answer {
+            width: 80%;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI心理測驗生成器</h1>
+        <div id="type-selection">
+            <h2>選擇心理測驗類型：</h2>
+            <button class="option" onclick="startTest('動物種類')">動物種類</button>
+            <button class="option" onclick="startTest('愛情測驗')">愛情測驗</button>
+            <button class="option" onclick="startTest('性格測驗')">性格測驗</button>
+        </div>
+        <div id="quiz-container" style="display:none;"></div>
+        <div id="result" style="display:none;"></div>
+        <div id="loading" style="display:none;">正在生成測驗問題，請稍候...</div>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let questions = [];
+        let userAnswers = [];
+
+        // 🚀 啟動測驗，生成問題
+        async function startTest(type) {
+            document.getElementById('type-selection').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer API_KEY'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            { role: 'system', content: `你是一位專業的心理測驗設計師，請生成3到5道${type}相關的心理測驗問題。格式如下：
+問題: 問題內容
+選項: A. 選項1, B. 選項2, C. 選項3, D. 選項4` }
+                        ],
+                        max_tokens: 500
+                    })
+                });
+
+                const data = await response.json();
+                const content = data.choices[0]?.message?.content?.trim();
+
+                if (!content) {
+                    throw new Error('API 回傳格式錯誤，無法解析內容');
+                }
+
+                questions = parseQuestions(content);
+                document.getElementById('loading').style.display = 'none';
+                displayQuestion();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').innerText = `生成問題時發生錯誤：${error.message}`;
+            }
+        }
+
+        // 📊 解析 GPT 回傳的問題
+        function parseQuestions(content) {
+            const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+            const parsedQuestions = [];
+            let currentQuestion = null;
+
+            lines.forEach(line => {
+                if (line.startsWith('問題:')) {
+                    if (currentQuestion) {
+                        parsedQuestions.push(currentQuestion);
+                    }
+                    currentQuestion = { question: line.replace('問題:', '').trim(), options: [] };
+                } else if (line.startsWith('選項:')) {
+                    currentQuestion.options = line.replace('選項:', '').split(',').map(opt => opt.trim());
+                }
+            });
+
+            if (currentQuestion) {
+                parsedQuestions.push(currentQuestion);
+            }
+
+            return parsedQuestions;
+        }
+
+        // 📋 顯示問題
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            container.style.display = 'block';
+            const currentQuestion = questions[currentQuestionIndex];
+
+            container.innerHTML = `<h2>${currentQuestionIndex + 1}. ${currentQuestion.question}</h2>`;
+            currentQuestion.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.classList.add('option');
+                btn.onclick = () => selectOption(option);
+                container.appendChild(btn);
+            });
+        }
+
+        // ✅ 選擇選項
+        function selectOption(option) {
+            userAnswers.push({ question: questions[currentQuestionIndex].question, answer: option });
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                displayQuestion();
+            } else {
+                getFinalResult();
+            }
+        }
+
+        // 🧠 獲取最終結果
+        async function getFinalResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer API_KEY'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            { role: 'system', content: `根據以下使用者的回答進行心理測驗分析：${JSON.stringify(userAnswers)}` }
+                        ],
+                        max_tokens: 500
+                    })
+                });
+
+                const data = await response.json();
+                const result = data.choices[0]?.message?.content?.trim();
+
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result').innerHTML = `<h2>測驗結果：</h2><p>${result}</p>`;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
